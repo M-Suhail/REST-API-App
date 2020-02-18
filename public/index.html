@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <title>DeveloperGo</title>
+  <link href="https://fonts.googleapis.com/css?family=Sriracha&display=swap" rel="stylesheet">
+  <link href="/styles.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+  <h1>DeveloperGo - REST API</h1>
+  <div id="homepage">
+    <h1>Hire a developer in your area!</h1>
+    <div id="developers"></div>
+  </div>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+  <script src="https://unpkg.com/react@15/dist/react.js"></script>
+  <script src="https://unpkg.com/react-dom@15/dist/react-dom.min.js"></script>
+
+  <!-- Create React Component -->
+  <script type="text/babel">
+  var Developers = React.createClass({
+    getInitialState: function(){
+      return({
+        developers: []
+      });
+    },
+    render: function(){
+      var developers = this.state.developers;
+      developers = developers.map(function(developer, index){
+        return(
+          <li key={index}>
+          <span className={developers.obj.available}></span>
+          <span className="name">{developers.obj.name}</span>
+          <span className="technology">{developers.obj.technology}</span>
+          <span className="dist">{Math.floor(developer.dis / 1000)} km</span>
+          </li>
+        );
+      });
+      return(
+        <div id="developer-container">
+        <form id="search" onSubmit={this.handleSubmit}>
+        <label>Enter your Latitude:</label>
+        <input type="text" ref="lat" placeholder="latitude" required />
+        <label>Enter your Longitude:</label>
+        <input type="text" ref="lng" placeholder="longitude" required />
+        <input type="submit" value="Find Developers" />
+        </form>
+        <ul>{developers}</ul>
+        </div>
+      );
+    },
+    handleSubmit: function(e){
+      e.preventDefault();
+      var lng = this.refs.lng.value;
+      var lat = this.refs.lat.value;
+
+      fetch('/api/developers?lng=' + lng + '&lat=' + lat).then(function(data){
+        return data.json();
+      }).then( json => {
+        this.setState({
+          developers: json
+        });
+        console.log(json);
+      });
+    }
+  });
+  ReactDOM.render(<Developers />, document.getElementById('developers'));
+</script>
+
+</body>
+</html>
